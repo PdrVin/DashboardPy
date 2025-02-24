@@ -15,7 +15,7 @@ df["Patrimônio"] = df["Patrimônio"].astype(str)
 df["IdadeExtenso"] = df["IdadeExtenso"].astype(str)
 df["Aquisição"] = pd.to_datetime(df["Aquisição"], format="%d/%m/%Y")
 df["Expiração"] = pd.to_datetime(df["Expiração"], format="%d/%m/%Y")
-df["Ano"] = df["Aquisição"].dt.year
+df["Ano"] = df["Aquisição"].dt.year.astype(str)
 
 # Transformação de Dados
 df["Categoria"] = df["Idade"].apply(
@@ -37,11 +37,9 @@ TIPOS_DISCO = ["-"] + list(df["TipoDisco"].unique())
 TIPOS_EQUIPAMENTO = ["-"] + list(df["TipoEquipamento"].unique())
 
 select_setor = st.sidebar.selectbox("Setor", SETORES, index=0)
-select_garantia = st.sidebar.selectbox("Garantia", GARANTIA, index=0)
-select_tipo_disco = st.sidebar.selectbox("Tipo de Disco", TIPOS_DISCO, index=0)
-select_tipo_equip = st.sidebar.selectbox(
-    "Tipo de Equipamento", TIPOS_EQUIPAMENTO, index=0
-)
+select_garantia = st.sidebar.radio("Garantia", GARANTIA, index=0)
+select_tipo_disco = st.sidebar.radio("Tipo de Disco", TIPOS_DISCO, index=0)
+select_tipo_equip = st.sidebar.radio("Tipo de Equipamento", TIPOS_EQUIPAMENTO, index=0)
 
 # Aplicando filtros ao DataFrame
 df_filter = df.copy()
@@ -66,21 +64,21 @@ count_garantia_ativa = len(df_filter[df_filter["Garantia"] == "Ativa"])
 # Treemap - Dispositivos por Setor
 def sector_treemap():
     fig = px.treemap(
-        df_filter,
+        df_filter["Setor"].str.replace(" ", "<br>"),
         path=["Setor"],
         title="Dispositivos por Setor",
         color_discrete_sequence=[
-            "#0B31A5",  # Azul Escuro
-            "#0641C8",  # Azul Médio
-            "#0050EB",  # Azul Brilhante
-            "#0078ED",  # Azul Claro
-            "#008CEE",  # Azul Céu
-            "#009FEF",  # Azul Água
-            "#46B3F3",  # Azul Pastel
-            "#8BC7F7",  # Azul Bebê
+            "#0B31A5",
+            "#0641C8",
+            "#0050EB",
+            "#0078ED",
+            "#008CEE",
+            "#009FEF",
+            "#46B3F3",
+            "#8BC7F7",
         ],
     )
-    fig.update_traces(root_color="#061953", textinfo="label+value", textfont_size=16)
+    fig.update_traces(root_color="#061953", textinfo="label+value", textfont_size=15)
     fig.update_layout(margin=dict(t=30, l=0, r=0, b=0), height=250)
     return fig
 
@@ -126,15 +124,16 @@ def age_column():
         x="Ano",
         y="Contagem",
         labels={"Ano": "", "Contagem": ""},
+        text="Contagem",
         color="Categoria",
         color_discrete_map=color_map,
         height=350,
-        text="Contagem",
     )
-    fig.update_xaxes(type="category")
+    fig.update_traces(textangle=0)
     fig.update_layout(
         margin=dict(t=30, l=0, r=0, b=0),
-        yaxis=dict(range=[0, max(df_age_category["Contagem"]) + 1]),
+        xaxis=dict(type="category"),
+        yaxis=dict(range=[0, max(df_age_category["Contagem"]) + 0.5]),
     )
     return fig
 
@@ -240,7 +239,7 @@ def situation_bar():
     return fig
 
 
-# Dasgboard
+# Dashboard
 # Cabeçaçho
 st.title("Relatório de Dispositivos")
 st.subheader(f"{df['Departamento'].iloc[0]}", divider="blue")
