@@ -1,4 +1,5 @@
 import os
+import os
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -10,6 +11,18 @@ st.set_page_config(layout="wide")
 
 
 # Carregamento dos Dados
+def load_data(file_path: str) -> pd.DataFrame:
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
+
+    # Verificação de Tipo de Arquivo
+    file_extension = os.path.splitext(file_path)[1].lower()
+    if file_extension == ".csv":
+        df = pd.read_csv(file_path, delimiter=",")
+    elif file_extension == ".xlsx":
+        df = pd.read_excel(file_path)
+    else:
+        raise ValueError("Formato de arquivo não suportado. Use .csv ou .xlsx.")
 def load_data(file_path: str) -> pd.DataFrame:
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
@@ -95,15 +108,18 @@ def sector_treemap(df_filter: pd.DataFrame):
     )
     fig.update_traces(root_color="#061953", textinfo="label+value", textfont_size=15)
     fig.update_layout(margin=dict(t=30, l=0, r=0, b=0), height=235, title_font_size=20)
+    fig.update_layout(margin=dict(t=30, l=0, r=0, b=0), height=235, title_font_size=20)
     return fig
 
 
 # Indicador - Garantia
 def warranty_indicator(df_filter: pd.DataFrame, indicator_value: int):
+def warranty_indicator(df_filter: pd.DataFrame, indicator_value: int):
     range_dispositivos = [0, len(df_filter)]
     fig = go.Figure(
         go.Indicator(
             mode="gauge+number",
+            value=indicator_value,
             value=indicator_value,
             gauge={
                 "axis": {
@@ -122,6 +138,7 @@ def warranty_indicator(df_filter: pd.DataFrame, indicator_value: int):
         height=190,
         title={
             "text": "Garantia",
+            "font": {"size": 20},
             "font": {"size": 20},
         },
     )
@@ -152,6 +169,7 @@ def age_column(df_filter: pd.DataFrame):
     fig.update_layout(
         margin=dict(t=30, l=0, r=0, b=0),
         title_font_size=20,
+        title_font_size=20,
         font_size=14,
         xaxis=dict(
             type="category",
@@ -160,11 +178,15 @@ def age_column(df_filter: pd.DataFrame):
         ),
         yaxis=dict(
             range=[0, max(df_filter.groupby("Ano").size()) + 0.2],
+            range=[0, max(df_filter.groupby("Ano").size()) + 0.2],
             title="",
             tickfont_size=14,
             gridcolor="gray",
             griddash="dot",
+            gridcolor="gray",
+            griddash="dot",
         ),
+        legend=dict(title_font_size=16, font_size=14),
         legend=dict(title_font_size=16, font_size=14),
     )
     return fig
@@ -217,6 +239,7 @@ def memory_bar(df_filter: pd.DataFrame):
             x=0.5,
         ),
     )
+    df_filter
     return fig
 
 
@@ -244,11 +267,17 @@ def storage_bar(df_filter: pd.DataFrame):
     fig.update_layout(
         margin=dict(t=30, l=0, r=0, b=0),
         title_font_size=20,
+        title_font_size=20,
         font_size=14,
         xaxis=dict(
             range=[0, max(df_filter.groupby(["Armazenamento"]).size()) + 1],
+            range=[0, max(df_filter.groupby(["Armazenamento"]).size()) + 1],
             title="",
             tickfont_size=14,
+            showgrid=True,
+            gridwidth=1,
+            gridcolor="gray",
+            griddash="dot",
             showgrid=True,
             gridwidth=1,
             gridcolor="gray",
@@ -290,11 +319,18 @@ def situation_bar(df_filter: pd.DataFrame):
     fig.update_layout(
         margin=dict(t=30, l=0, r=0, b=0),
         title_font_size=20,
+        margin=dict(t=30, l=0, r=0, b=0),
+        title_font_size=20,
         font_size=14,
         xaxis=dict(
             range=[0, max(df_situation["Contagem"]) + 2],
+            range=[0, max(df_situation["Contagem"]) + 2],
             title="",
             tickfont_size=14,
+            showgrid=True,
+            gridwidth=1,
+            gridcolor="gray",
+            griddash="dot",
             showgrid=True,
             gridwidth=1,
             gridcolor="gray",
@@ -312,6 +348,7 @@ def situation_bar(df_filter: pd.DataFrame):
 
 # Dados
 df = load_data("data/DadosPlanilha.csv")
+df = load_data("data/DadosPlanilha.csv")
 df_filter = sidebar_filter(df)
 num_dispositivos = len(df_filter["ServiceTag"])
 count_garantia_ativa = len(df_filter[df_filter["Garantia"] == "Ativa"])
@@ -323,7 +360,13 @@ st.subheader(f"{df['Departamento'].iloc[0]}", divider="blue")
 
 col1, col2 = st.columns([1, 2])
 col1.markdown(
+col1.markdown(
     f"""
+        <div style="display: flex; flex-direction: column; align-items: center;
+            border: 2px solid #0050eb; border-radius: 10px; margin-bottom: 1rem; padding: 10px;">
+            <p style="margin: 0; padding: 0; font-size: 20px; font-weight: 800;">Dispositivos</p>
+            <p style="margin: 0; padding: 0; font-size: 2.5rem; line-height: normal;">{num_dispositivos}</p>
+        </div>
         <div style="display: flex; flex-direction: column; align-items: center;
             border: 2px solid #0050eb; border-radius: 10px; margin-bottom: 1rem; padding: 10px;">
             <p style="margin: 0; padding: 0; font-size: 20px; font-weight: 800;">Dispositivos</p>
