@@ -6,7 +6,9 @@ import plotly.graph_objects as go
 import numpy as np
 
 # Tamanho Layout
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Relatório de Dispositivos", page_icon="📊", layout="wide"
+)
 
 
 # Carregamento dos Dados
@@ -310,6 +312,20 @@ def situation_bar(df_filter: pd.DataFrame):
     return fig
 
 
+# Card de Valores
+def mark_card(object, title: str, value: int):
+    object.markdown(
+        f"""
+        <div style="display: flex; flex-direction: column; align-items: center;
+            border: 2px solid #0050eb; border-radius: 10px; margin-bottom: 1rem; padding: 10px;">
+            <p style="margin: 0; padding: 0; font-size: 20px; font-weight: 800;">{title}</p>
+            <p style="margin: 0; padding: 0; font-size: 2.5rem; line-height: normal;">{value}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 # Dados
 df = load_data("data/DadosPlanilha.csv")
 df_filter = sidebar_filter(df)
@@ -321,16 +337,7 @@ st.title("Relatório de Dispositivos")
 st.subheader(f"{df['Departamento'].iloc[0]}", divider="blue")
 
 col1, col2 = st.columns([1, 2])
-col1.markdown(
-    f"""
-        <div style="display: flex; flex-direction: column; align-items: center;
-            border: 2px solid #0050eb; border-radius: 10px; margin-bottom: 1rem; padding: 10px;">
-            <p style="margin: 0; padding: 0; font-size: 20px; font-weight: 800;">Dispositivos</p>
-            <p style="margin: 0; padding: 0; font-size: 2.5rem; line-height: normal;">{num_dispositivos}</p>
-        </div>
-    """,
-    unsafe_allow_html=True,
-)
+mark_card(col1, "Dispositivos", num_dispositivos)
 col1.plotly_chart(sector_treemap(df_filter))
 col1.plotly_chart(warranty_indicator(df_filter, count_garantia_ativa))
 col2.plotly_chart(age_column(df_filter))
