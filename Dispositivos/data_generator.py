@@ -4,19 +4,23 @@ import string
 import os
 from datetime import datetime, timedelta
 
+
 # Gerar ServiceTag (código alfanumérico aleatório de 7 caracteres)
 def generate_service_tag():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=7))
 
+
 # Gerar Patrimônio (código numérico aleatório de 8 dígitos)
 def generate_patrimonio():
     return random.randint(10000000, 99999999)
+
 
 # Gerar Data Aquisição (data aleatória entre 2012 e 2025)
 def generate_aquisicao_date():
     start_date = datetime(2012, 6, 1)
     end_date = datetime(2025, 3, 1)
     return start_date + timedelta(days=random.randint(0, (end_date - start_date).days))
+
 
 # Conjuntos de valores
 SETORES = [
@@ -71,9 +75,10 @@ df = pd.DataFrame(dados, columns=[
 ])
 
 # Verificar se o arquivo já existe e substituir
+data_folder = "data"
 output_file = "DadosPlanilha.csv"
 if os.path.exists(output_file):
     os.remove(output_file)
 
-df.to_csv(output_file, index=False)
+df.to_csv(f"{data_folder}/{output_file}", index=False)
 print(f"Arquivo gerado: {output_file}")
