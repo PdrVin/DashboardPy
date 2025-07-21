@@ -120,7 +120,7 @@ def warranty_indicator(df_filter: pd.DataFrame, indicator_value: int):
         )
     )
     fig.update_layout(
-        margin=dict(t=30, l=30, r=30, b=20),
+        margin=dict(t=30, l=30, r=45, b=20),
         height=190,
         title={
             "text": "Garantia",

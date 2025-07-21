@@ -24,8 +24,8 @@ def generate_aquisicao_date():
 
 # Conjuntos de valores
 SETORES = [
-    ("Atendimento", 9), ("Recepção", 3), ("Financeiro", 7), ("Gerência", 3),
-    ("Contabilidade", 7), ("Processos", 6), ("TI", 10), ("Recursos Humanos", 5)
+    ("Atendimento", 18), ("Recepção", 10), ("Financeiro", 15), ("Gerência", 6),
+    ("Contabilidade", 16), ("Processos", 10), ("TI", 15), ("Recursos Humanos", 10)
 ]
 
 CPUS = [
@@ -49,7 +49,7 @@ for setor, quantidade in SETORES:
         tipo_equipamento = random.choice(TIPO_EQUIPAMENTO)
         aquisicao = generate_aquisicao_date()
         expiracao = aquisicao + timedelta(days=random.choice([3 * 365, 4 * 365, 5 * 365]))
-        idade = str(datetime.today().year - aquisicao.year)
+        idade = datetime.today().year - aquisicao.year
         idade_extenso = "Novo" if idade < 1 else ("1 ano" if idade == 1 else f"{idade} anos")
         garantia = "Expirada" if datetime.today() > expiracao else "Ativa"
         cpu, geracao = random.choice(CPUS)
